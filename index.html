@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c1118" />
+    <meta name="color-scheme" content="dark light" />
+    <meta
+      name="description"
+      content="SoundScope — an on-device, offline-capable sound level meter and hearing-awareness toolkit. Not a certified instrument."
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>SoundScope — sound level meter & hearing toolkit</title>
+  </head>
+  <body>
+    <noscript>SoundScope needs JavaScript and microphone access to work.</noscript>
+
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">SoundScope</span>
+      </div>
+      <div class="header-actions">
+        <button id="bigtext-toggle" class="icon-btn" type="button" aria-pressed="false" title="Toggle large text">
+          A<sup>+</sup>
+        </button>
+        <button id="theme-toggle" class="icon-btn" type="button" title="Toggle theme">◐</button>
+      </div>
+    </header>
+
+    <nav class="tabbar" id="tabbar" aria-label="Views">
+      <!-- buttons injected by main.js -->
+    </nav>
+
+    <main id="view-root" class="view-root" tabindex="-1">
+      <!-- active view rendered here -->
+    </main>
+
+    <div id="toast-region" class="toast-region" role="status" aria-live="polite"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
