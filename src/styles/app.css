@@ -488,6 +488,116 @@ body {
   background: var(--danger);
 }
 
+/* ---------- Safety banner (plain-language status) ---------- */
+.safety-banner {
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-4);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+}
+.safety-banner-sm {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3);
+  width: 100%;
+  text-align: center;
+}
+.safety-title {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.safety-sub {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.safety-banner[data-level='safe'] {
+  border-color: var(--zone-quiet);
+  background: color-mix(in srgb, var(--zone-quiet) 14%, transparent);
+}
+.safety-banner[data-level='safe'] .safety-title {
+  color: var(--zone-quiet);
+}
+.safety-banner[data-level='moderate'] {
+  border-color: var(--zone-moderate);
+  background: color-mix(in srgb, var(--zone-moderate) 14%, transparent);
+}
+.safety-banner[data-level='moderate'] .safety-title {
+  color: var(--zone-moderate);
+}
+.safety-banner[data-level='loud'] {
+  border-color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 16%, transparent);
+}
+.safety-banner[data-level='loud'] .safety-title {
+  color: var(--warn);
+}
+.safety-banner[data-level='harmful'] {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 16%, transparent);
+}
+.safety-banner[data-level='harmful'] .safety-title {
+  color: var(--danger);
+}
+
+/* ---------- Larger dose display ---------- */
+.dose-big {
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.dose-bar-lg {
+  height: 20px;
+  margin: var(--sp-3) 0;
+}
+
+/* ---------- Expander / advanced ---------- */
+.expander {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  margin-bottom: var(--sp-4);
+  box-shadow: var(--shadow);
+}
+.expander-summary {
+  cursor: pointer;
+  padding: var(--sp-4);
+  font-weight: 600;
+  list-style: none;
+}
+.expander-summary::-webkit-details-marker {
+  display: none;
+}
+.expander-summary::after {
+  content: '▸';
+  float: right;
+  color: var(--text-dim);
+}
+.expander[open] .expander-summary::after {
+  content: '▾';
+}
+.expander-body {
+  padding: 0 var(--sp-4) var(--sp-4);
+}
+.sub {
+  font-size: 0.95rem;
+  margin: 0 0 var(--sp-2);
+}
+.rule {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: var(--sp-3) 0;
+}
+.cal-progress {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elev);
+  border: 1px dashed var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* focus visibility */
 :focus-visible {
   outline: 3px solid var(--info);

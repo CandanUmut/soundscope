@@ -31,24 +31,53 @@ export function notice(text, variant = 'info') {
   return el('div', { class: `notice notice-${variant}`, role: 'note' }, text);
 }
 
-/** Toggle button group. options: [{value,label}]. Calls onChange(value). */
+/**
+ * Toggle button group. options: [{value,label}]. Calls onChange(value).
+ * The active button updates immediately on click; the returned element also
+ * exposes `setValue(v)` so callers can sync it when the value changes elsewhere.
+ */
 export function segmented(options, value, onChange, ariaLabel = '') {
   const group = el('div', { class: 'segmented', role: 'group', 'aria-label': ariaLabel });
+  const btns = [];
+
+  function setActive(v) {
+    for (const b of btns) {
+      const on = b.dataset.value === String(v);
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', String(on));
+    }
+  }
+
   for (const opt of options) {
     const btn = el(
       'button',
       {
         type: 'button',
-        class: 'seg-btn' + (opt.value === value ? ' is-active' : ''),
-        'aria-pressed': String(opt.value === value),
-        onClick: () => onChange(opt.value)
+        class: 'seg-btn',
+        onClick: () => {
+          setActive(opt.value); // reflect the choice right away
+          onChange(opt.value);
+        }
       },
       opt.label
     );
-    btn.dataset.value = opt.value;
+    btn.dataset.value = String(opt.value);
+    btns.push(btn);
     group.appendChild(btn);
   }
+
+  setActive(value);
+  group.setValue = setActive;
   return group;
+}
+
+/** Collapsible section (native <details>) for tucking away advanced options. */
+export function expander(summaryText, children, open = false) {
+  const d = el('details', { class: 'expander' });
+  if (open) d.setAttribute('open', '');
+  d.appendChild(el('summary', { class: 'expander-summary' }, summaryText));
+  d.appendChild(el('div', { class: 'expander-body' }, [].concat(children).filter(Boolean)));
+  return d;
 }
 
 /** Labelled range slider with a live value readout. */

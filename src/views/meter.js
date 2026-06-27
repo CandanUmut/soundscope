@@ -4,8 +4,8 @@
 import { el, card, notice, segmented } from '../ui/components.js';
 import { fmtDb, fmtDuration } from '../utils/format.js';
 import { WEIGHTING_LABELS } from '../audio/weighting.js';
-import { isCalibrated } from '../calibration/calibrate.js';
 import { zoneForLevel } from '../ui/gauge.js';
+import { safetyStatus } from './exposure.js';
 
 export function meterView(ctx) {
   const { store, gauge, timeline } = ctx;
@@ -71,21 +71,20 @@ export function meterView(ctx) {
   // --- timeline ---
   const timelineWrap = el('div', {}, timeline.element);
 
-  const calNote = isCalibrated()
-    ? null
-    : notice(
-        'Uncalibrated — readings and zone colors are only meaningful after you calibrate. ' +
-          'See the Calibrate tab.',
-        'warn'
-      );
+  // --- plain-language hearing-safety banner (the "first page" warning) ---
+  const safetyBanner = el('div', { class: 'safety-banner safety-banner-sm', 'data-level': 'idle' });
+  const sbTitle = el('div', { class: 'safety-title' }, 'Not measuring');
+  const sbText = el('div', { class: 'safety-sub' }, 'Tap Start to begin.');
+  safetyBanner.append(sbTitle, sbText);
+
+  // Shown only when the user has never calibrated.
+  const calNote = notice('Not calibrated yet — tap Calibrate for one-tap auto setup so readings mean something.', 'warn');
 
   const root = el('div', {}, [
     card(null, [
       el('div', { class: 'meter-main' }, [gauge.element, readout, badgeRow]),
-      el('div', { class: 'controls-row' }, [
-        labelled('Weighting', weightSeg),
-        labelled('Response', timeSeg)
-      ]),
+      safetyBanner,
+      el('div', { class: 'controls-row' }, [labelled('Weighting', weightSeg), labelled('Response', timeSeg)]),
       controls
     ]),
     calNote,
@@ -93,25 +92,36 @@ export function meterView(ctx) {
     card('Level over time', timelineWrap)
   ]);
 
+  let lastSafetyKey = null;
+
   function update(s) {
     unitEl.textContent = weightLabel(s);
     const v = s.spl;
     numberEl.textContent = s.status === 'running' ? fmtDb(v, 0) : '—';
     gauge.set(s.status === 'running' ? v : null);
 
-    // badges
+    // badges (kept minimal — the weighting/response is already in the unit label)
     badgeRow.innerHTML = '';
-    badgeRow.appendChild(badge(`${WEIGHTING_LABELS[s.weighting]} ${s.timeWeighting === 'slow' ? 'Slow' : 'Fast'}`));
     if (s.status === 'running' && Number.isFinite(v)) {
       const zone = zoneForLevel(v);
       if (zone) badgeRow.appendChild(badge(zone, zone === 'harmful' ? 'danger' : zone === 'loud' ? 'warn' : ''));
+      if (s.peak != null) badgeRow.appendChild(badge(`peak ${fmtDb(s.peak, 0)}`));
     }
     if (s.nearLimit && s.status === 'running') {
       badgeRow.appendChild(badge('near sensor limit (>95 dB)', 'danger'));
     }
-    if (s.peak != null && s.status === 'running') {
-      badgeRow.appendChild(badge(`peak ${fmtDb(s.peak, 0)}`));
+
+    // safety banner — driven by the smoothed average so it doesn't flicker
+    const status = safetyStatus(s.status === 'running' ? s.exposure.avgLevel : null);
+    if (status.key !== lastSafetyKey) {
+      lastSafetyKey = status.key;
+      safetyBanner.dataset.level = status.key;
+      sbTitle.textContent = status.title;
+      sbText.textContent = status.text;
     }
+
+    // hide the calibrate nudge once any calibration method has been used
+    calNote.style.display = s.calibration.method ? 'none' : '';
 
     const m = s.metrics;
     stats.leq.value.textContent = fmtDb(m.leq);

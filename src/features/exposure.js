@@ -30,6 +30,7 @@ export class ExposureAccumulator {
     this.oshaDoseFraction = 0; // 1.0 == 100%
     this.nioshDoseFraction = 0;
     this._lastLevel = null;
+    this._emaLevel = null; // smoothed level used for a stable time-to-limit
   }
 
   /**
@@ -41,6 +42,10 @@ export class ExposureAccumulator {
     if (!Number.isFinite(level) || dtSeconds <= 0) return;
     const L = Math.max(level, 40);
     this._lastLevel = level;
+    // ~10 s smoothing so the projected time-to-limit is readable, not jittery.
+    const tau = 10;
+    const alpha = 1 - Math.exp(-Math.min(dtSeconds, tau) / tau);
+    this._emaLevel = this._emaLevel == null ? level : this._emaLevel + alpha * (level - this._emaLevel);
     this.oshaDoseFraction += dtSeconds / allowedSeconds(L, STANDARDS.osha);
     this.nioshDoseFraction += dtSeconds / allowedSeconds(L, STANDARDS.niosh);
   }
@@ -55,11 +60,13 @@ export class ExposureAccumulator {
   }
 
   snapshot() {
+    // Project from the smoothed level so the countdown is stable and readable.
     return {
       oshaDose: this.oshaDoseFraction * 100,
-      oshaTimeToLimit: this._timeToLimit(this.oshaDoseFraction, this._lastLevel, STANDARDS.osha),
+      oshaTimeToLimit: this._timeToLimit(this.oshaDoseFraction, this._emaLevel, STANDARDS.osha),
       nioshDose: this.nioshDoseFraction * 100,
-      nioshTimeToLimit: this._timeToLimit(this.nioshDoseFraction, this._lastLevel, STANDARDS.niosh)
+      nioshTimeToLimit: this._timeToLimit(this.nioshDoseFraction, this._emaLevel, STANDARDS.niosh),
+      avgLevel: this._emaLevel
     };
   }
 }

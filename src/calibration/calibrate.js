@@ -62,6 +62,11 @@ export function calibrateManual(offset) {
   return commit(offset, 'nudge');
 }
 
+/** Auto loopback estimate (rough, equipment-free). */
+export function calibrateAuto(offset) {
+  return commit(offset, 'auto');
+}
+
 /** Method 3 — device preset (rough starting point only). */
 export function calibratePreset(presetId) {
   const p = DEVICE_PRESETS.find((d) => d.id === presetId);
@@ -75,7 +80,8 @@ export function isCalibrated() {
 
 export const METHOD_LABELS = {
   reference: 'Reference-match (accurate)',
+  auto: 'Auto estimate (rough)',
   nudge: 'Manual nudge (rough)',
   preset: 'Device preset (rough)',
-  null: 'Uncalibrated'
+  null: 'Not calibrated'
 };
