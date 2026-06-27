@@ -1,0 +1,15 @@
+{
+  "name": "soundscope",
+  "version": "1.0.0",
+  "description": "A browser-based sound-level meter and hearing-awareness toolkit. On-device, offline-capable PWA.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

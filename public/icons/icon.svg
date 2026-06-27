@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SoundScope">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101a26" />
+      <stop offset="1" stop-color="#0c1118" />
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#37d6a0" />
+      <stop offset="0.6" stop-color="#f2c14e" />
+      <stop offset="1" stop-color="#e8543f" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)" />
+  <g fill="none" stroke="url(#wave)" stroke-width="22" stroke-linecap="round">
+    <path d="M96 256 q32 -120 64 0 t64 0 t64 0 t64 0 t64 0" />
+  </g>
+  <g fill="url(#wave)">
+    <rect x="120" y="300" width="24" height="40" rx="8" opacity="0.5" />
+    <rect x="180" y="280" width="24" height="80" rx="8" opacity="0.7" />
+    <rect x="240" y="250" width="24" height="140" rx="8" />
+    <rect x="300" y="280" width="24" height="80" rx="8" opacity="0.7" />
+    <rect x="360" y="300" width="24" height="40" rx="8" opacity="0.5" />
+  </g>
+</svg>
